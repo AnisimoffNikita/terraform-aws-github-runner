@@ -571,3 +571,9 @@ variable "enable_runner_binaries_syncer" {
   type        = bool
   default     = true
 }
+
+variable "s3_runner_nix_cache_arn" {
+  description = "S3 nix cache bucket arn"
+  type        = string 
+  default     = null
+}

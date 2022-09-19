@@ -44,6 +44,10 @@ data "aws_iam_policy_document" "deny_unsecure_transport" {
   }
 }
 
+data "aws_s3_bucket" "s3_nix_cache" {
+  bucket = var.runners_nix_cache_s3_bucket
+}
+
 resource "aws_sqs_queue_policy" "build_queue_policy" {
   queue_url = aws_sqs_queue.queued_builds.id
   policy    = data.aws_iam_policy_document.deny_unsecure_transport.json
@@ -218,6 +222,8 @@ module "runners" {
   pool_lambda_timeout                        = var.pool_lambda_timeout
   pool_runner_owner                          = var.pool_runner_owner
   pool_lambda_reserved_concurrent_executions = var.pool_lambda_reserved_concurrent_executions
+
+  s3_runner_nix_cache_arn = data.aws_s3_bucket.s3_nix_cache.arn
 }
 
 module "runner_binaries" {

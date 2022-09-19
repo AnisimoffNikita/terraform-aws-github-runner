@@ -39,7 +39,20 @@ resource "aws_iam_role_policy" "dist_bucket" {
   role = aws_iam_role.runner.name
   policy = templatefile("${path.module}/policies/instance-s3-policy.json",
     {
-      s3_arn = "${var.s3_runner_binaries.arn}/${var.s3_runner_binaries.key}"
+      s3_arn = "${var.s3_runner_binaries.arn}/${var.s3_runner_binaries.key}",
+      s3_nix_arn = "${var.s3_runner_nix_cache_arn}"
+    }
+  )
+}
+
+resource "aws_iam_role_policy" "nix_cache" {
+  count = var.s3_runner_nix_cache_arn != null ? 1 : 0
+
+  name = "nix-cache-bucket"
+  role = aws_iam_role.runner.name
+  policy = templatefile("${path.module}/policies/instance-s3-nix-cache-policy.json",
+    {
+      s3_nix_arn = "${var.s3_runner_nix_cache_arn}"
     }
   )
 }
